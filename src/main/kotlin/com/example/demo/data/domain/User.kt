@@ -1,5 +1,7 @@
 package com.example.demo.data.domain
 
+import com.example.demo.data.dto.UserCreateDto
+import com.example.demo.data.dto.UserUpdateDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -8,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import lombok.ToString
 import org.hibernate.annotations.Comment
+import org.springframework.http.ResponseEntity
 
 @Entity
 @Table(name = "tb_user")
@@ -34,4 +37,19 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val uid: Long? = null
+
+    fun update(dto: UserUpdateDto) {
+        name = dto.name
+        email = dto.email
+    }
+
+    companion object {
+        fun create(dto: UserCreateDto): User = User(
+            name = dto.name ?: "알 수 없음",
+            email = dto.email,
+            id = dto.id,
+            password = dto.password
+        )
+    }
+
 }

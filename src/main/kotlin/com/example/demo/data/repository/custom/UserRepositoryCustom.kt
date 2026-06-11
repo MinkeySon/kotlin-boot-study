@@ -5,6 +5,6 @@ import java.util.Optional
 
 interface UserRepositoryCustom {
 
-    fun userList(): Optional<List<User>>
+    fun userList(): List<User>
 
 }

@@ -43,6 +43,9 @@ dependencies {
     kapt("jakarta.annotation:jakarta.annotation-api")
     kapt("jakarta.persistence:jakarta.persistence-api")
 
+    // logging
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+
     // lombook
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")

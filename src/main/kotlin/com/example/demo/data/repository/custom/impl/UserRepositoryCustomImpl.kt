@@ -12,14 +12,12 @@ class UserRepositoryCustomImpl (
     private val jpaQueryFactory: JPAQueryFactory
 ) : UserRepositoryCustom {
 
-    override fun userList(): Optional<List<User>> {
+    override fun userList(): List<User> {
         var qUser: QUser = QUser.user
 
-        return Optional.ofNullable(
-            jpaQueryFactory.select(qUser)
+        return jpaQueryFactory.select(qUser)
                 .from(qUser)
                 .fetch()
-        )
-    }
 
+    }
 }

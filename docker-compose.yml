@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: db
+    image: postgres:17
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - test-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: esbgw123!
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  pg_data:

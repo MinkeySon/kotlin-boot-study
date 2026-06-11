@@ -76,3 +76,89 @@ data class UserDto (
     val uid: Long
 )
 ```
+
+### 5. 로깅
+java 기반의 boot 에서는 @Slf4j 로 손쉽게 로깅을 할 수 있었다. kotlin 에서는 불가능하기 때문에 별도의 파일을 작성해야 한다.
+
+**LoggerExt.kt**
+```kotlin
+inline fun <reified T> T.logger() = KotlinLogging.logger(T::class.java.name)
+```
+
+이후 각 클래스 별로 호출을 위해선 변수로 선언해서 사용해야 한다.
+```kotlin
+@RestController
+@RequestMapping("/api/user")
+@Slf4j
+class UserController (
+    private val userService: UserService,
+){
+    private val log = logger()
+
+    @PostMapping("/save")
+    fun saveUser(@RequestBody dto: UserCreateDto): ResponseEntity<*> {
+
+        log.info{"[UserController::saveUser] try to save user! $dto"}
+        // todo
+
+    }
+}
+```
+
+### 6. ResponseEntity 응답 함수화
+
+**ResultCode.kt**
+```kotlin
+enum class ResultCode (
+    val code: Int,
+    val msg: String,
+){
+    OK(200, "ok"),
+    BAD_REQUEST(400, "bad request"),
+    NOT_FOUND(404, "not found"),
+}
+```
+
+**CommonResponse.kt**
+```kotlin
+data class CommonResponse<T>(
+    val code: Int = 0,
+    val msg: String = "",
+) {
+    companion object {
+        fun <T> success(): CommonResponse<T> =
+            CommonResponse(
+                code = ResultCode.OK.code,
+                msg = ResultCode.OK.msg,
+            )
+
+        fun <T> fail(result: ResultCode): CommonResponse<T> =
+            CommonResponse(
+                code = result.code,
+                msg = result.msg,
+            )
+
+        fun toResponseEntity(commonResponse: CommonResponse<*>): ResponseEntity<*> = ResponseEntity.status(commonResponse.code).body(commonResponse.msg)
+
+    }
+}
+```
+
+### 7. 생성자 메서드 생성
+setter 를 사용하는 걸 지양하는 로직에서 Entity 클래스 내 dto 파라미터로 생성자를 만드는걸 자주 사용한다.
+
+```java
+public User(dto UserDto){
+    // todo
+}
+```
+
+보통 이런식으로 사용하는데, kotlin 에서는 companion 을 사용한다. java 의 static 과 동일하다.
+
+```kotlin
+companion object{
+    fun create(dto: UserCreateDto): User = User(
+        name = dto.name
+    )
+}
+```
