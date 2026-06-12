@@ -27,3 +27,6 @@ logging:
 
   main:
     allow-bean-definition-overriding: true
+
+jwt:
+  secret: JahSc5PPUXIYh3QZGKib+mB0cVRH8tJIsVbZo4xAEmlKNMbDDls4DUwHiKYJP92CdZ8xGFlJvIaLip6LflHTrQ==

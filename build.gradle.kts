@@ -43,6 +43,14 @@ dependencies {
     kapt("jakarta.annotation:jakarta.annotation-api")
     kapt("jakarta.persistence:jakarta.persistence-api")
 
+    // security
+    implementation ("org.springframework.boot:spring-boot-starter-security")
+
+    // jwt
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
     // logging
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
 
