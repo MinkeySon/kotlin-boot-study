@@ -7,4 +7,7 @@ interface UserRepositoryCustom {
 
     fun userList(): List<User>
 
+    fun existsById(id: String): Boolean
+
+    fun getByUserId(id: String): User?
 }

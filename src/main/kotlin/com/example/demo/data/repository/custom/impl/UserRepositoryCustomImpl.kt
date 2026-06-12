@@ -18,6 +18,23 @@ class UserRepositoryCustomImpl (
         return jpaQueryFactory.select(qUser)
                 .from(qUser)
                 .fetch()
+    }
 
+    override fun existsById(id: String): Boolean {
+        var qUser: QUser = QUser.user
+
+        return Optional.ofNullable(jpaQueryFactory.select(qUser)
+            .from(qUser)
+            .where(qUser.id.eq(id))
+            .fetchOne()).isPresent
+    }
+
+    override fun getByUserId(id: String): User? {
+        var qUser: QUser = QUser.user
+
+        return jpaQueryFactory.select(qUser)
+            .from(qUser)
+            .where(qUser.id.eq(id))
+            .fetchOne()
     }
 }

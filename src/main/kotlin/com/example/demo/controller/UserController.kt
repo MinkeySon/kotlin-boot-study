@@ -1,6 +1,9 @@
 package com.example.demo.controller
 
 import com.example.demo.config.logger
+import com.example.demo.data.domain.CommonResponse
+import com.example.demo.data.domain.ResultCode
+import com.example.demo.data.dto.SignInDto
 import com.example.demo.data.dto.UserCreateDto
 import com.example.demo.data.dto.UserUpdateDto
 import com.example.demo.service.UserService
@@ -47,4 +50,18 @@ class UserController (
         return userService.deleteUser(id)
     }
 
+    @PostMapping("/auth/sign-up")
+    fun signUp(@RequestBody dto: UserCreateDto): ResponseEntity<*>{
+        log.info{"[UserController::signUp] try to sign up!"}
+        if (dto.id.isBlank() || dto.pwd.isBlank() || dto.name.isBlank()) {
+            return CommonResponse.toResponseEntity(CommonResponse.fail<Unit>(ResultCode.BAD_REQUEST))
+        }
+        return userService.signUp(dto)
+    }
+
+    @PostMapping("/auth/sign-in")
+    fun signIn(@RequestBody dto: SignInDto): ResponseEntity<*>{
+        log.info{"[UserController::signIn] try to sign in!"}
+        return userService.signIn(dto)
+    }
 }

@@ -8,4 +8,6 @@ enum class ResultCode (
     BAD_REQUEST(400, "bad request"),
     NOT_FOUND(404, "not found"),
     FAIL(500, "fail"),
+    EXPIRED_TOKEN(401, "expired token"),
+    UNAUTHORIZED(401, "unauthorized"),
 }
