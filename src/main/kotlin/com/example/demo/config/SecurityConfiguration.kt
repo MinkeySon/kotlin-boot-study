@@ -3,6 +3,7 @@ package com.example.demo.config
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
@@ -13,7 +14,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 class SecurityConfiguration (
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val redisTemplate: StringRedisTemplate,
     private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
 ){
@@ -48,7 +50,9 @@ class SecurityConfiguration (
                 authorize("/api/**", hasRole("USER"))
                 authorize(anyRequest, authenticated)
             }
-            addFilterBefore<UsernamePasswordAuthenticationFilter>(jwtAuthenticationFilter)
+            addFilterBefore<UsernamePasswordAuthenticationFilter>(
+                JwtAuthenticationFilter(jwtTokenProvider, redisTemplate)
+            )
         }
         return http.build()
     }

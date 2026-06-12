@@ -4,6 +4,7 @@ import com.example.demo.data.dto.SignInDto
 import com.example.demo.data.dto.UserCreateDto
 import com.example.demo.data.dto.UserUpdateDto
 import org.springframework.http.ResponseEntity
+import java.net.http.HttpHeaders
 
 interface UserService {
     fun saveUser(dto: UserCreateDto): ResponseEntity<*>
@@ -17,4 +18,6 @@ interface UserService {
     fun signUp(dto: UserCreateDto): ResponseEntity<*>
 
     fun signIn(dto: SignInDto): ResponseEntity<*>
+
+    fun logOut(token: String): ResponseEntity<*>
 }

@@ -1,6 +1,5 @@
 package com.example.demo.config
 
-import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
@@ -78,10 +77,10 @@ class JwtTokenProvider (
         }
     }
 
-    fun extractToken(request: HttpServletRequest):String{
-        log.info {"[JwtTokenProvider::extractToken] start to check authentication"}
-        return request.getHeader("Authorization").also{ log.info { "[JwtTokenProvider::extractToken] founded!" } }
-    }
+    fun extractToken(request: HttpServletRequest): String? =
+        request.getHeader("Authorization")
+            ?.takeIf { it.startsWith("Bearer ") }
+            ?.removePrefix("Bearer ")
 
     fun validateToken(token:String): Boolean {
         log.warn {"[JwtTokenProvider::validateToken] start to check token's validation!"}
@@ -96,5 +95,16 @@ class JwtTokenProvider (
             log.info { "[JwtTokenProvider::validateToken] token is empty or null" }
             false
         }
+    }
+
+    fun getRemainingValidity(token: String): Long {
+        val expiration = Jwts.parser()
+            .verifyWith(signingKey)
+            .build()
+            .parseSignedClaims(token)
+            .payload
+            .expiration
+
+        return expiration.time - System.currentTimeMillis()
     }
 }

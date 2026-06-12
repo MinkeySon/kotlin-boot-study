@@ -12,19 +12,24 @@ import com.example.demo.data.dto.UserUpdateDto
 import com.example.demo.data.repository.UserRepository
 import com.example.demo.service.UserService
 import jakarta.transaction.Transactional
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.toJavaDuration
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtTokenProvider: JwtTokenProvider
-): UserService {
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val redisTemplate: StringRedisTemplate,
+
+    ): UserService {
 
     private val log = logger()
-
 
     @Transactional
     override fun saveUser(dto: UserCreateDto): ResponseEntity<*> {
@@ -119,6 +124,14 @@ class UserServiceImpl(
         val token = jwtTokenProvider.createAccessToken(foundedUser.id, foundedUser.authorities.mapNotNull { it.authority })
 
         return CommonResponse.toResponseEntity(CommonResponse.success(token))
+    }
+
+    override fun logOut(token: String): ResponseEntity<*> {
+        val remaining = jwtTokenProvider.getRemainingValidity(token)
+        if (remaining > 0) {
+            redisTemplate.opsForValue().set("blacklist:$token", "logout", Duration.ofMillis(remaining))
+        }
+        return CommonResponse.toResponseEntity(CommonResponse.success<Unit>())
     }
 
     private fun isIdExist(id: String): Boolean{
