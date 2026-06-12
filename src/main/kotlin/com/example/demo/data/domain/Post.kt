@@ -1,5 +1,6 @@
 package com.example.demo.data.domain
 
+import com.example.demo.data.dto.PostCreateDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -23,10 +24,14 @@ class Post (
     var content: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uid")
+    @JoinColumn(name = "uid", nullable = false)
     var user: User,
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var pid: Long? = null
+
+    companion object {
+        fun create(dto: PostCreateDto): Post = Post(title=dto.title, content=dto.content, user=dto.user)
+    }
 }
